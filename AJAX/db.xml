@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <auth>
  <users>
- <user><user_id>1</user_id><login>AAAAAA</login><password>4e1e8bdb3bafb95157f535e472c75ed8</password><email>admin@aaa.com</email><name>aaa</name></user><user><user_id>2</user_id><login>AAAAAA1</login><password>4e1e8bdb3bafb95157f535e472c75ed8</password><email>admin@aaa.com1</email><name>aaa</name></user><user><user_id>3</user_id><login>AAAAAA12</login><password>4e1e8bdb3bafb95157f535e472c75ed8</password><email>admin@aaa.com12</email><name>aaa</name></user></users>
+ <user><user_id>1</user_id><login>AAAAAA</login><password>4e1e8bdb3bafb95157f535e472c75ed8</password><email>admin@aaa.com</email><name>aaa</name></user><user><user_id>2</user_id><login>AAAAAA1</login><password>4e1e8bdb3bafb95157f535e472c75ed8</password><email>admin@aaa.com1</email><name>aaa</name></user><user><user_id>3</user_id><login>AAAAAA12</login><password>4e1e8bdb3bafb95157f535e472c75ed8</password><email>admin@aaa.com12</email><name>aaa</name></user><user><user_id>4</user_id><login>AAAAAA121</login><password>406405172a3276c5061026a3deaae557</password><email>admin@aaa.com111</email><name>aaa</name></user><user><user_id>5</user_id><login>AAAAAA1111</login><password>406405172a3276c5061026a3deaae557</password><email>aaaa@aaa.c</email><name>122</name></user><user><user_id>6</user_id><login>qqqqqq</login><password>406405172a3276c5061026a3deaae557</password><email>sadda@sad.assasasaa</email><name>aa</name></user></users>
  <sessions>
- </sessions>
+ <session><user_id>6</user_id><session_code>PRUbbnPaijM2J4G</session_code></session><session><user_id>5</user_id><session_code>O9c6mcfz2GcqQH8</session_code></session></sessions>
 </auth>

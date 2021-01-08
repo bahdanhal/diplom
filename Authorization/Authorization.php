@@ -5,6 +5,7 @@ class Authorization
     private $auth;
     public function __construct($usersDB, $sessionsDB)
     {
+        
         $this->auth = $this->check($usersDB, $sessionsDB);
     }
     
@@ -18,10 +19,10 @@ class Authorization
             $user_id = $sessionsDB->screening($_COOKIE['user_id']);
             $session = $sessionsDB->screening($_COOKIE['session_code']);
             $node = $sessionsDB->find("user_id", $user_id);
-            if (isset($node) and $node['user_id'] == $user_id and $node['session_code'] == $session) {
+            if (isset($node) and (int)$node->user_id == $user_id and (string)$node->session_code == $session) {
                
                 //есть запись в таблице сессий, сверяем данные
-                $this->setSession($user_id, $usersDB->find('user_id', $user_id)['login'], $session);
+                $this->setSession($user_id, (string)$usersDB->find('user_id', $user_id)['login'], $session);
                 return true;
             }
         }
@@ -33,8 +34,8 @@ class Authorization
         $_SESSION['user_id'] = $user_id;
         $_SESSION['login'] = $login;
         //~ обновляем куки
-        setcookie("user_id", $user_id, time() + 3600 * 24 * 14);
-        setcookie("session_code", $session, time() + 3600 * 24 * 14);
+        setcookie("user_id", $user_id, time() + 3600 * 24 * 14, "/");
+        setcookie("session_code", $session, time() + 3600 * 24 * 14, "/");
     }
     
     public function signin($usersDB, $sessionsDB) {
@@ -44,11 +45,10 @@ class Authorization
         $response['ok'] = false;
         $response['password_error'] = false;
         $response['login_error'] = false;
-        if (isset($user) and $user['password'] == $password) {
+        if (isset($user) and (string)$user->password == $password) {
             //пользователь найден в бд, логин совпадает с паролем
-            $_SESSION['user_id'] = $user['user_id'];
+            $_SESSION['user_id'] = (string)$user->user_id;
             $_SESSION['login'] = $login;
-         
             $r_code = $this->generateCode(15);
             if (!$sessionsDB->find('user_id', $_SESSION['user_id'])) {
                 $sessionsDB->create('user_id', $_SESSION['user_id']);
@@ -56,12 +56,12 @@ class Authorization
             $sessionsDB->update('user_id', $_SESSION['user_id'],
                 'session_code', $sessionsDB->screening($r_code));
             //2 недели
-            setcookie("user_id", $_SESSION['user_id'], time() + 3600 * 24 * 14);
-            setcookie("session_code", $sessionsDB->screening($r_code), time() + 3600 * 24 * 14);
+            setcookie("user_id", $_SESSION['user_id'], time() + 3600 * 24 * 14, "/");
+            setcookie("session_code", $sessionsDB->screening($r_code), time() + 3600 * 24 * 14, "/");
             $response['ok'] = true; 
         } else {
             //~ пользователь не найден в бд, или пароль не соответствует введенному
-            if ($usersDB->find('login', $login)){ 
+            if ((string)$user->password !== $password){ 
                 $response['password_error'] = true;
             }
             else{
@@ -109,7 +109,7 @@ class Authorization
             $response = $this->responseChange($response, 'login_error');
         }
         if (!preg_match('/^(?=.*\d)(?=.*[@#\-_$%^&+=§!\?])(?=.*[a-z])(?=.*[A-Z])[0-9A-Za-z@#\-_$%^&+=§!\?]{6,}$/',$password)){
-                $response = $this->responseChange($response, 'password_error'); //'Длина пароля должна быть от 6 символов, пароль должен'.
+            $response = $this->responseChange($response, 'password_error'); //'Длина пароля должна быть от 6 символов, пароль должен'.
             //' содержать как минимум одну цифру, минимум один спецсимвол и буквы в разных регистрах';
         }
   

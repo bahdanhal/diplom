@@ -20,6 +20,9 @@ $( document ).ready(function() {
 function sendLogForm(result_form, ajax_form, url) {
     $.ajax({
         url:     url,
+        headers: {
+            'Cookie': document.cookie
+         }
         type:     "POST", 
         dataType: "html", 
         data: $("#"+ajax_form).serialize(), 

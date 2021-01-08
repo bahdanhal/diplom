@@ -36,7 +36,6 @@ class DB
     
     public function create($value, $key){
         $node = $this->xml->{$this->table}[0]->addChild($this->element);
-        print_r($key);
         $node->addChild($value, $key);
         $this->xml->saveXML(DB_FILE);
         
