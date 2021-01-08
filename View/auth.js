@@ -25,7 +25,6 @@ function sendLogForm(ajax_form, url) {
         dataType: "html", 
         data: $("#"+ajax_form).serialize(), 
         success: function(response) { 
-        	console.log(response);
         	result = $.parseJSON(response);
 			if(result['ok'] == true){
 				window.location = '/index.php';
@@ -51,7 +50,6 @@ function sendRegForm(ajax_form, url) {
         dataType: "html", 
         data: $("#"+ajax_form).serialize(), 
         success: function(response) { 
-        console.log(response);
         	result = $.parseJSON(response);
   
 			if(result['ok'] == true){
