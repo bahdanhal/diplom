@@ -85,7 +85,7 @@ class Authorization
             setcookie("session_code", $sessionsDB->screening($r_code), time() + 3600 * 24 * 14, "/");
             $response['ok'] = true; 
         } else {
-            if ((string)$user->password !== $password){ 
+            if (isset($user)){ 
                 $response['password_error'] = true;
             }
             else{

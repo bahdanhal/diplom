@@ -2,7 +2,7 @@
 $( document ).ready(function() {
     $("#log_btn").click(
 		function(){
-			sendLogForm('log_result_form', 'log_form', 'AJAX/signin.php');
+			sendLogForm('log_form', 'AJAX/signin.php');
 			return false; 
 		}
 	);
@@ -11,13 +11,13 @@ $( document ).ready(function() {
  $( document ).ready(function() {
     $("#reg_btn").click(
 		function(){
-			sendRegForm('reg_result_form', 'reg_form', 'AJAX/reg.php');
+			sendRegForm('reg_form', 'AJAX/reg.php');
 			return false; 
 		}
 	);
 });
 
-function sendLogForm(result_form, ajax_form, url) {
+function sendLogForm(ajax_form, url) {
     $.ajax({
         url:     url,
 
@@ -27,11 +27,10 @@ function sendLogForm(result_form, ajax_form, url) {
         success: function(response) { 
         	console.log(response);
         	result = $.parseJSON(response);
-  
 			if(result['ok'] == true){
 				window.location = '/index.php';
 			}
-        	if(result['password_error'] == true){
+			if(result['password_error'] == true){
         		$('#log_result_form').html('Wrong password');
         	}
         	if(result['login_error'] == true){
@@ -45,7 +44,7 @@ function sendLogForm(result_form, ajax_form, url) {
  	});
 }
 
-function sendRegForm(result_form, ajax_form, url) {
+function sendRegForm(ajax_form, url) {
     $.ajax({
         url:     url,
         type:     "POST", 
@@ -58,42 +57,26 @@ function sendRegForm(result_form, ajax_form, url) {
 			if(result['ok'] == true){
 				window.location = '/index.php';
 			}
-
-        	if(result['fields'] == true){
-        		$('#fields_result').html('All fields are required. ');
-        	}
-
-        	if(result['no_coincidence'] == true){
-        		$('#coincidence_result').html('Password is not equal to confirm. ');
-        	}
-        	
-        	if(result['login_error'] == true){
-        		$('#login_result').html('Login is not correct. Min 6 symbols, only letters and numbers');
-        	}
-        	
-        	if(result['password_error'] == true){
-        		$('#password_result').html('Password is not correct. Min 6 symbols, password must have at least one large letter, small letter and number');
-        	}
-        	
-        	if(result['email_error'] == true){
-        		$('#email_result').html('Email is not correct. ');
-        	}
-        	
-        	if(result['name_error'] == true){
-        		$('#name_result').html('Name is not correct. Min 2 symbols, only letters and numbers');
-        	}
-        	
-        	if(result['login_repeat'] == true){
-        		$('#login_repeat').html('It is another user with this login. ');
-        	}
-        	
-        	if(result['email_repeat'] == true){
-        		$('#email_repeat').html('It is another user with this email. ');
-        	}
+			message(result['fields'], '#fields_result', 'All fields are required. ');
+			message(result['no_coincidence'], '#coincidence_result', 'Passwords are not equal.');
+			message(result['login_error'], '#login_result', 'Login is not correct. Min 6 symbols, only letters and numbers.');
+        	message(result['password_error'], '#password_result', 'Password is not correct. Min 6 symbols, password must have at least one large letter, small letter and number');        	
+        	message(result['email_error'], '#email_result', 'Email is not correct.');
+        	message(result['name_error'], '#name_result', 'Name is not correct. Min 2 symbols, only letters and numbers');        	
+        	message(result['login_repeat'], '#login_repeat', 'It is another user with this login.');
+        	message(result['email_repeat'], '#email_repeat', 'It is another user with this email. ');
         	
     	},
     	error: function(response) {
             $('#reg_result_form').html('error');
     	}
  	});
+}
+
+function message(result, form, text){
+	if(result == true){
+        $(form).html(text);
+    } else {
+		$(form).html('');
+	}
 }
