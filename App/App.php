@@ -7,6 +7,9 @@ class App
     private $usersDB;
     private $sessionsDB;
     private $authorization;
+    /**
+     * 
+     */
     public function __construct()
     {
         $this->usersDB = new DB('users');
@@ -14,6 +17,9 @@ class App
         $this->authorization = new Authorization($this->usersDB, $this->sessionsDB);
     }
     
+    /**
+     * application start
+     */
     public function run()
     {
         
@@ -27,16 +33,28 @@ class App
         
     }
     
+    /**
+     * 
+     * @return array with response about login
+     */
     public function signin()
     {
         return $this->authorization->signin($this->usersDB, $this->sessionsDB);
     }
     
+    /**
+     * 
+     * @return array with response about registration
+     */
     public function reg()
     {
         return $this->authorization->reg($this->usersDB, $this->sessionsDB);
     }
     
+    /**
+     * 
+     * @param string $filename with html template
+     */
     public function render($filename)
     {
         if($filename == "View/hello.php"){

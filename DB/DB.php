@@ -6,6 +6,10 @@ class DB
     private $table;
     private $element;
     
+    /**
+     * 
+     * @param string $tableName
+     */
     public  function __construct($tableName){
         if (!file_exists(DB_FILE)) {
             $xmlFile = fopen(DB_FILE, "w");
@@ -16,7 +20,7 @@ class DB
 <auth>
 
 </auth>";
-            // записываем в файл текст
+
             $this->xml = simplexml_load_file(DB_FILE);
             fwrite($xmlFile, $xmlStr);
             fclose($xmlFile);
@@ -34,6 +38,11 @@ class DB
         
     }
     
+    /**
+     * creating new node
+     * @param string $value
+     * @param string $key
+     */
     public function create($value, $key){
         $node = $this->xml->{$this->table}[0]->addChild($this->element);
         $node->addChild($value, $key);
@@ -41,6 +50,12 @@ class DB
         
     }
     
+    /**
+     * finding one node with value and key
+     * @param string $findValue
+     * @param string $findKey
+     * @return \SimpleXMLElement|NULL
+     */
     public function find($findValue, $findKey){
         foreach($this->xml->{$this->table}[0] as $seg)
         {
@@ -55,6 +70,12 @@ class DB
         return null;
     }
     
+    /**
+     * finding all results with value and key
+     * @param string $findValue
+     * @param string $findKey
+     * @return \SimpleXMLElement[]|NULL
+     */
     public function findAll($findValue, $findKey){
         $counter = 0;
         foreach($this->xml->{$this->table}[0] as $seg)
@@ -69,13 +90,18 @@ class DB
         return null;
     }
     
+    /**
+     * 
+     * @param string $findValue
+     * @param string $findKey
+     * @param string $updateValue
+     * @param string $updateKey
+     */
     public function update($findValue, $findKey, $updateValue, $updateKey){
         foreach($this->xml->{$this->table}[0] as $seg)
         {
-            //echo $findValue.' ' .$seg[$findValue]. ' '. $findKey.' '. $updateValue. ' '.$updateKey.' ';
             if($seg->{$findValue} == $findKey) {
                 $seg->{$updateValue} = $updateKey;
-                //$seg->addAttribute($updateValue, $updateKey);
             }
         }
         $this->xml->saveXML(DB_FILE);
@@ -83,6 +109,11 @@ class DB
         
     }
     
+    /**
+     * 
+     * @param string $value
+     * @param string $key
+     */
     public function delete($value, $key){
         foreach($this->xml->{$this->table}[0] as $seg)
         {
@@ -95,24 +126,24 @@ class DB
         $this->xml->saveXML(DB_FILE);
     }
     
+    /**
+     * data protection
+     * @param string $data
+     * @return string
+     */
     public function screening($data)
     {
         $data = trim($data); 
         return htmlspecialchars(addslashes($data));
     }
     
+    /**
+     * max id in table for unique numbers
+     * @param string $value
+     * @return number
+     */
     public function max($value) {
         $max = 0;
-        /*foreach($this->xml->{$this->table}[0] as $seg)
-        {
-            print_r($seg);
-            print_r($seg->attributes()->{$value});
-            if($seg->attributes()->{$value} > $max) {
-                $max = $seg->attributes()->{$value};
-                
-            }
-        }
-        echo $max;*/
         foreach ($this->xml->users->user as $user){
 
             if((int)$user->user_id > $max){

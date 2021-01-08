@@ -1,14 +1,28 @@
 <?php
 namespace Authorization;
+use DB\DB;
+
 class Authorization
 {
     private $auth;
+    
+    /**
+     * 
+     * @param DB $usersDB
+     * @param DB $sessionsDB
+     */
     public function __construct($usersDB, $sessionsDB)
     {
         
         $this->auth = $this->check($usersDB, $sessionsDB);
     }
     
+    /**
+     * 
+     * @param DB $usersDB
+     * @param DB $sessionsDB
+     * @return boolean
+     */
     private function check($usersDB, $sessionsDB)
     {
         if (isset($_SESSION['user_id']) and isset($_SESSION['login'])){
@@ -29,15 +43,25 @@ class Authorization
         return false;
     }
     
+    /**
+     * 
+     * @param string $user_id
+     * @param string $login
+     * @param string $session
+     */
     private function setSession($user_id, $login, $session)
     {
         $_SESSION['user_id'] = $user_id;
         $_SESSION['login'] = $login;
-        //~ обновляем куки
         setcookie("user_id", $user_id, time() + 3600 * 24 * 14, "/");
         setcookie("session_code", $session, time() + 3600 * 24 * 14, "/");
     }
     
+    /**
+     * 
+     * @param DB $usersDB
+     * @param DB $sessionsDB
+     */
     public function signin($usersDB, $sessionsDB) {
         $login = $usersDB->screening($_POST['login']);
         $password = md5($usersDB->screening($_POST['password']).'s a l t'); //~ хэш пароля с солью
@@ -46,10 +70,11 @@ class Authorization
         $response['password_error'] = false;
         $response['login_error'] = false;
         if (isset($user) and (string)$user->password == $password) {
-            //пользователь найден в бд, логин совпадает с паролем
+            
             $_SESSION['user_id'] = (string)$user->user_id;
             $_SESSION['login'] = $login;
             $r_code = $this->generateCode(15);
+            
             if (!$sessionsDB->find('user_id', $_SESSION['user_id'])) {
                 $sessionsDB->create('user_id', $_SESSION['user_id']);
             }
@@ -60,7 +85,6 @@ class Authorization
             setcookie("session_code", $sessionsDB->screening($r_code), time() + 3600 * 24 * 14, "/");
             $response['ok'] = true; 
         } else {
-            //~ пользователь не найден в бд, или пароль не соответствует введенному
             if ((string)$user->password !== $password){ 
                 $response['password_error'] = true;
             }
@@ -72,6 +96,10 @@ class Authorization
         echo json_encode($response);
     }
     
+    /**
+     * 
+     * @param DB $usersDB for new user registration
+     */
     public function reg($usersDB) {
         $response = $this->validate($usersDB);
         if (($response['ok'])==true) {
@@ -89,6 +117,11 @@ class Authorization
         echo json_encode($response);
     }
     
+    /**
+     * 
+     * @param DB $usersDB
+     * @return array with checked password
+     */
     public function validate($usersDB) {
         //~ Проверка валидности данных
         $login = $_POST['login'];
@@ -132,6 +165,11 @@ class Authorization
         return $response;
     }
     
+    /**
+     * 
+     * @param int $length
+     * @return string
+     */
     public function generateCode($length) {
         $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPRQSTUVWXYZ0123456789";
         $code = "";
@@ -142,6 +180,11 @@ class Authorization
         return $code;
     }
     
+    /**
+     * 
+     * @param array $response
+     * @return array
+     */
     private function responseInit($response) {
         $response['fields'] = false;
         $response['no_coincidence'] = false;
@@ -156,6 +199,12 @@ class Authorization
         return $response;
     }
     
+    /**
+     * 
+     * @param array $response
+     * @param string $field
+     * @return array
+     */
     private function responseChange($response, $field) {
         $response[$field] = true;
         $response['ok'] = false;
@@ -164,7 +213,12 @@ class Authorization
     }
     
     
-    
+    /**
+     * 
+     * @param DB $usersDB
+     * @param DB $sessionsDB
+     * @return boolean
+     */
     public function getAuth($usersDB, $sessionsDB){
         return $this->auth;
     }
