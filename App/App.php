@@ -9,8 +9,8 @@ class App
     private $authorization;
     public function __construct()
     {
-        $this->usersDB = new DB('user');
-        $this->sessionsDB = new DB('session');
+        $this->usersDB = new DB('users');
+        $this->sessionsDB = new DB('sessions');
         $this->authorization = new Authorization($this->usersDB, $this->sessionsDB);
     }
     

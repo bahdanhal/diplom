@@ -79,6 +79,7 @@ class Authorization
             $password = md5($usersDB->screening($_POST['password']).'s a l t'); 
             $login = $usersDB->screening($_POST['login']);
             $user_id = ($usersDB->max('user_id') + 1);
+            //print_r($user_id);
             $usersDB->create('user_id', $user_id);
             $usersDB->update('user_id', $user_id, 'login', $login);
             $usersDB->update('user_id', $user_id, 'password', $password);
