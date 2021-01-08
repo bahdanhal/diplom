@@ -17,7 +17,7 @@ class App
     public function run()
     {
         
-        if($this->authorization->getAuth($this->usersDB, $this->sessionsDB)){
+        if(!empty($this->authorization->getAuth($this->usersDB, $this->sessionsDB))){
 
             $this->render("View/hello.php");
             
@@ -39,7 +39,11 @@ class App
     
     public function render($filename)
     {
-        echo file_get_contents($filename);
+        if($filename == "View/hello.php"){
+            $name = (string)$this->usersDB->find('user_id', $_COOKIE['user_id'])->name;
+        }
+        
+        require_once ($filename);
         exit;
     }
 }

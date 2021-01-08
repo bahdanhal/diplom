@@ -9,5 +9,8 @@
 </head>
 <body>
 	Hello, <?=  $name ?>!!!!!!!!!!!!!!!!!!!!!!!
-
+	
+	
+	<a href="/exit.php">exit</a>
+	
    

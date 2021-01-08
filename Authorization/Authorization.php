@@ -22,7 +22,7 @@ class Authorization
             if (isset($node) and (int)$node->user_id == $user_id and (string)$node->session_code == $session) {
                
                 //есть запись в таблице сессий, сверяем данные
-                $this->setSession($user_id, (string)$usersDB->find('user_id', $user_id)['login'], $session);
+                $this->setSession($user_id, (string)$usersDB->find('user_id', $user_id)->login, $session);
                 return true;
             }
         }
