@@ -16,6 +16,8 @@
         </form>
     </div> <!-- /container -->
     <br/>
+    <div id="log_result_form"></div>
+    <br /> 
     <div class="container">
         <form name = "reg-form" id="reg_form" action="" method="post">
         	<input type="text" name="login" class="form-control" placeholder="Login" required autofocus>
@@ -27,8 +29,16 @@
         </form>
     </div> <!-- /container -->
     <br/>
-    <div id="result_form"></div> 
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
-   <script src="View/auth.js"></script>
+    <div id="fields_result"></div>
+    <div id="coincidence_result"></div>
+    <div id="login_result"></div>
+    <div id="password_result"></div>
+    <div id="email_result"></div>
+    <div id="name_result"></div>
+    <div id="login_repeat"></div>
+    <div id="email_repeat"></div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
+    <script src="View/auth.js"></script>
    
    

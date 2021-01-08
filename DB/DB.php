@@ -23,8 +23,8 @@ class DB
     }
     
     public function create($value, $key){
-        $user = $this->xml->addChild($this->table);
-        $user->addAttribute($value, $key);
+        $node = $this->xml->addChild($this->table);
+        $node->addAttribute($value, $key);
         $this->xml->saveXML(DB_FILE);
         
     }
@@ -60,11 +60,14 @@ class DB
     public function update($findValue, $findKey, $updateValue, $updateKey){
         foreach($this->xml->{$this->table} as $seg)
         {
+            //echo $findValue.' ' .$seg[$findValue]. ' '. $findKey.' '. $updateValue. ' '.$updateKey.' ';
             if($seg[$findValue] == $findKey) {
                 $seg[$updateValue] = $updateKey;
+                //$seg->addAttribute($updateValue, $updateKey);
             }
+            $this->xml->saveXML(DB_FILE);
         }
-        $this->xml->saveXML(DB_FILE);
+        
         
     }
     
@@ -81,8 +84,19 @@ class DB
     
     public function screening($data)
     {
-        $data = trim($data); //~ удаление пробелов из начала и конца строки
+        $data = trim($data); 
         return htmlspecialchars(addslashes($data));
     }
+    
+    public function max($value) {
+        $max = 0;
+        foreach($this->xml->{$this->table} as $seg)
+        {
+            if($seg[$value] > $max) {
+                $max = $seg[$value];
+            }
+        }
+        return $max;
+    } 
 }
 
