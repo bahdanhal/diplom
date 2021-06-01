@@ -1,20 +1,18 @@
 <?php
 namespace App;
 use DB\DB;
-use Authorization\Authorization;
+use User\User;
 class App
 {
-    private $usersDB;
-    private $sessionsDB;
-    private $authorization;
+    private $DB;
+    private $User;
     /**
      * 
      */
     public function __construct()
     {
-        $this->usersDB = new DB('users');
-        $this->sessionsDB = new DB('sessions');
-        $this->authorization = new Authorization($this->usersDB, $this->sessionsDB);
+        $this->DB = new DB("localhost", "site", "root", "");
+        $this->user = new User($this->DB);
     }
     
     /**
@@ -23,7 +21,7 @@ class App
     public function run()
     {
         
-        if(!empty($this->authorization->getAuth($this->usersDB, $this->sessionsDB))){
+        if(!empty($this->user->getAuth())){
 
             $this->render("View/hello.php");
             
@@ -39,7 +37,7 @@ class App
      */
     public function signin()
     {
-        return $this->authorization->signin($this->usersDB, $this->sessionsDB);
+        return $this->user->signin($this->DB);
     }
     
     /**
@@ -48,7 +46,7 @@ class App
      */
     public function reg()
     {
-        return $this->authorization->reg($this->usersDB, $this->sessionsDB);
+        return $this->user->reg($this->DB, $this->DB);
     }
     
     /**
@@ -58,9 +56,8 @@ class App
     public function render($filename)
     {
         if($filename == "View/hello.php"){
-            $name = (string)$this->usersDB->find('user_id', $_COOKIE['user_id'])->name;
+            $name = $this->DB->findBy("users", "user_id", $_COOKIE["user_id"])["name"];
         }
-        
         require_once ($filename);
         exit;
     }

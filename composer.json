@@ -1,5 +1,5 @@
 {
-    "name": "user-pc/htdocs",
+    "name": "user-pc/htdocs2",
     "authors": [
         {
             "name": "bahdan.hal",
@@ -10,10 +10,9 @@
     "autoload": {
 	    "psr-4": {
 	        "App\\": "App",
-	        "Authorization\\": "Authorization",
+	        "User\\": "User",
 	        "DB\\": "DB"
 	        
 	    }
 	}
 }
-

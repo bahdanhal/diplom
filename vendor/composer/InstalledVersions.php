@@ -24,24 +24,24 @@ class InstalledVersions
 private static $installed = array (
   'root' => 
   array (
-    'pretty_version' => '1.0.0+no-version-set',
-    'version' => '1.0.0.0',
+    'pretty_version' => 'dev-master',
+    'version' => 'dev-master',
     'aliases' => 
     array (
     ),
-    'reference' => NULL,
-    'name' => 'user-pc/htdocs',
+    'reference' => '66958510d34f52c6d0521db69c828bf6cdc3c6bf',
+    'name' => 'user-pc/htdocs2',
   ),
   'versions' => 
   array (
-    'user-pc/htdocs' => 
+    'user-pc/htdocs2' => 
     array (
-      'pretty_version' => '1.0.0+no-version-set',
-      'version' => '1.0.0.0',
+      'pretty_version' => 'dev-master',
+      'version' => 'dev-master',
       'aliases' => 
       array (
       ),
-      'reference' => NULL,
+      'reference' => '66958510d34f52c6d0521db69c828bf6cdc3c6bf',
     ),
   ),
 );
