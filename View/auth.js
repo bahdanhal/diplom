@@ -25,9 +25,9 @@ function sendLogForm(ajax_form, url) {
         dataType: "html", 
         data: $("#"+ajax_form).serialize(), 
         success: function(response) { 
-        	result = $.parseJSON(response);
+        	result = JSON.parse(response);
 			if(result['ok'] == true){
-				window.location = '/index.php';
+				window.location = '/';
 			}
 			if(result['password_error'] == true){
         		$('#log_result_form').html('Wrong password');
@@ -50,10 +50,10 @@ function sendRegForm(ajax_form, url) {
         dataType: "html", 
         data: $("#"+ajax_form).serialize(), 
         success: function(response) { 
-        	result = $.parseJSON(response);
+        	result = JSON.parse(response);
   
 			if(result['ok'] == true){
-				window.location = '/index.php';
+				window.location = '/';
 			}
 			message(result['fields'], '#fields_result', 'All fields are required. ');
 			message(result['no_coincidence'], '#coincidence_result', 'Passwords are not equal.');

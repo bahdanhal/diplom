@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <title>HELLO</title>
-
-</head>
-<body>
-	Hello, <?=  $name ?>!!!!!!!!!!!!!!!!!!!!!!!
-	
-	
-	<a href="/exit.php">exit</a>
-	
-   
+<div>
+Привет, <?=  $params['user']['name'] ?>!	
+</div>
+<div>
+<?if($params['user']['status'] == 'admin'):?>
+    <a href="/cabinet/catalog">Управление каталогом</a>
+    <a href="/cabinet/orders">Заказы</a>
+<?endif;?>
+    <a href="/cabinet/basket">Корзина</a>
+</div>
+<a href="/exit">Выход</a>

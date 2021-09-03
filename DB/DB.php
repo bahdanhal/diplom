@@ -16,49 +16,91 @@ class DB
         
     }
     
-    public function create($table, $valuesNames, $values){
-        $statement = $this->connection->prepare("INSERT INTO :table SET `$valuesNames` VALUES (':values')");
-        $statement->bindParam(":table", $table);
-        //$statement->bindParam(":valuesNames", $valuesNames);
-        $statement->bindParam(":values", $values);
+    public function create($table, $values){
+        $valuesStr = '';
+        foreach($values as $valueName => $value){
+            $valuesStr .= "`$valueName`=:$valueName, ";
+        }
+        $valuesStr = substr($valuesStr,0,-2);  
+
+        $statement = $this->connection->prepare("INSERT INTO $table" . ($valuesStr ? " SET $valuesStr" : ' VALUES()'));
+
+        foreach($values as $valueName => $value){
+            $statement->bindValue(":$valueName", $value);
+        }  
         $statement->execute();
         return $this->connection->lastInsertId($table);
     }
     
-    public function findBy($table, $name, $value){
-        $statement = $this->connection->prepare("SELECT * FROM $table WHERE `$name` = ':value'");
-        //$statement->bindParam(":table", $table);
-        //$statement->bindParam(":name", $name);
-        $statement->bindParam(":value", $value);
-        //print_r($statement);
+    public function findBy($table, $name = false, $value = false, $sort = false, $limit = false){
+        $statement = $this->connection->prepare(
+            "SELECT * FROM $table".
+            (($name && $value) ? " WHERE `$name` = :value" : ' WHERE 1') .
+            ($sort?(" SORT BY $sort") : "") .
+            ($limit?(" LIMIT ".$limit[0] . ", " . $limit[1]) : "")
+        );
+        //$statement->bindValue(":table", $table);
+        //$statement->bindValue(":name", $name);
+        if($value){
+            $statement->bindValue(":value", $value);
+        }
+
         if($statement->execute()){
-            return $statement->fetch();
+            while($tmp = $statement->fetch()){
+                $result[] = $tmp;
+
+            }
+            return $result ?? false;
         }
         return false;
         
     }
     
     public function findAll($table, $sort = false){
-        $statement = $this->connection->prepare("SELECT * FROM $table SORT BY :sort");
-        $statement->bindParam(":sort", $sort);
+        $statement = $this->connection->prepare("SELECT * FROM $table SORT BY `$sort`");
         if($statement->execute()){
-            return $statement->fetch();
+            while($tmp = $statement->fetch()){
+                $result[] = $tmp;
+            }
+            return $result;
         }
         return false;    
     }
 
-    public function update($table, $id, $valuesNames, $values){
-        $statement = $this->connection->prepare("UPDATE $table SET $valuesNames VALUES (:values) WHERE id = :id");  
-        //$statement->bindParam(":table", $table);
-        $statement->bindParam(":values", $values);
-        $statement->bindParam(":id", $id);
+    public function update($table, $whereName, $whereValue, $values){
+        $valuesStr = '';
+        foreach($values as $valueName => $value){
+            $valuesStr .= "`$valueName`=:$valueName, ";
+        }
+        $valuesStr = substr($valuesStr,0,-2);
+        
+        $statement = $this->connection->prepare("UPDATE $table SET $valuesStr WHERE `$whereName` = :whereValue");  
+        
+        foreach($values as $valueName => $value){
+            $statement->bindValue(":$valueName", $value);
+        } 
+        $statement->bindValue(":whereValue", $whereValue);
         $statement->execute();
+        return $statement->rowCount();
     }
     
-    public function delete($table, $id){
-        $statement = $this->connection->prepare("DELETE FROM $table WHERE id = :id");  
-        //$statement->bindParam(":table", $table);
-        $statement->bindParam(":id", $id);
+    public function delete($table, $values){
+        $valuesStr = '';
+        foreach($values as $valueName => $value){
+            $valuesStr .= "`$valueName`=:$valueName and ";
+        }
+        $valuesStr = substr($valuesStr,0,-5);
+
+        $statement = $this->connection->prepare("DELETE FROM $table WHERE `id` IN (SELECT `id`
+                FROM $table
+                WHERE $valuesStr
+            );
+        ");  
+
+        foreach($values as $valueName => $value){
+            $statement->bindValue(":$valueName", $value);
+        } 
+
         $statement->execute();
     }
 

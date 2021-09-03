@@ -7,28 +7,78 @@ namespace Composer\Autoload;
 class ComposerStaticInit66045a029c31b289a05e0cde10fbadc5
 {
     public static $prefixLengthsPsr4 = array (
+        'V' => 
+        array (
+            'View\\' => 5,
+        ),
         'U' => 
         array (
             'User\\' => 5,
         ),
+        'R' => 
+        array (
+            'Router\\' => 7,
+        ),
+        'O' => 
+        array (
+            'Order\\' => 6,
+        ),
         'D' => 
         array (
+            'Data\\' => 5,
             'DB\\' => 3,
+        ),
+        'C' => 
+        array (
+            'CatalogItem\\' => 12,
+        ),
+        'B' => 
+        array (
+            'Basket\\' => 7,
         ),
         'A' => 
         array (
+            'Auth\\' => 5,
             'App\\' => 4,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'View\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Routing/View',
+        ),
         'User\\' => 
         array (
             0 => __DIR__ . '/../..' . '/User',
         ),
+        'Router\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Routing/Router',
+        ),
+        'Order\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Order',
+        ),
+        'Data\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Routing/Data',
+        ),
         'DB\\' => 
         array (
             0 => __DIR__ . '/../..' . '/DB',
+        ),
+        'CatalogItem\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/CatalogItem',
+        ),
+        'Basket\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Basket',
+        ),
+        'Auth\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Auth',
         ),
         'App\\' => 
         array (

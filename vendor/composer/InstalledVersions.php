@@ -29,7 +29,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '66958510d34f52c6d0521db69c828bf6cdc3c6bf',
+    'reference' => 'ffd9a5e7928af75a34f373b5b4227352894cef41',
     'name' => 'user-pc/htdocs2',
   ),
   'versions' => 
@@ -41,7 +41,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '66958510d34f52c6d0521db69c828bf6cdc3c6bf',
+      'reference' => 'ffd9a5e7928af75a34f373b5b4227352894cef41',
     ),
   ),
 );

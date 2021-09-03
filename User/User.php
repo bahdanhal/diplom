@@ -5,37 +5,39 @@ use DB\DB;
 class User
 {
     private $auth;
-    
+    private $DB;
+    private $fields;
     /**
      * 
      * @param DB $DB
      */
     public function __construct($DB)
     {
-        
-        $this->auth = $this->check($DB);
+        $this->DB = $DB;
+        $this->auth = $this->check();
     }
     
     /**
      * 
-     * @param DB $DB
      * @return boolean
      */
-    private function check($DB)
+    private function check()
     {
         if (isset($_SESSION["user_id"]) and isset($_SESSION["login"])){
-            return true;
+            $this->fields = $this->DB->findBy("users", "id", $_SESSION["user_id"])[0]?? false;
+            return $this->fields?true:false;
         }
         
         if (isset($_COOKIE["user_id"]) and isset($_COOKIE["session_code"])) {
             $user_id = $_COOKIE["user_id"];
             $session = $_COOKIE["session_code"];
-            $node = $DB->readBy("sessions","user_id", $user_id);
-            if (isset($node) and $node["user_id"] == $user_id and (string)$node["session_code"] == $session) {
+            $node = $this->DB->findBy("sessions","user_id", $user_id)[0] ?? false;
+            if ($node and $node["user_id"] == $user_id and (string)$node["session_code"] == $session) {
                 //есть запись в таблице сессий, сверяем данные
-                $this->setSession($user_id, (string)$DB->findBy("users", "user_id", $user_id)["login"], $session);
+                $this->fields = $this->DB->findBy("users", "id", $user_id)[0] ?? false;
+                $this->setSession($user_id, $this->fields["login"], $session);
                 return true;
-            }
+            } 
         }
         return false;
     }
@@ -54,34 +56,32 @@ class User
         setcookie("session_code", $session, time() + 3600 * 24 * 14, "/");
     }
     
-    /**
-     * 
-     * @param DB $DB
-     */
-    public function signin($DB) {
+    public function signin() {
         $login = $_POST["login"];
         $password = md5($_POST["password"]."s a l t"); //~ хэш пароля с солью
-        $user = $DB->findBy("users", "login", $login);
+        $user = $this->DB->findBy("users", "login", $login)[0] ?? false;
         $response["ok"] = false;
-        $response["password_error"] = false;
         $response["login_error"] = false;
         if ($user and $user["password"] == $password) {
             
-            $_SESSION["user_id"] = $user["user_id"];
+            $_SESSION["user_id"] = $user["id"];
             $_SESSION["login"] = $login;
             $r_code = $this->generateCode(15);
             
-            if (!$DB->findBy("users", "user_id", $_SESSION["user_id"])) {
-                $DB->create("users", "user_id", $_SESSION["user_id"]);
+            if (!isset($this->DB->findBy("sessions", "user_id", $_SESSION["user_id"])[0])) {
+                $this->DB->create(
+                    "sessions", 
+                    ["user_id" => $_SESSION["user_id"]]
+                );
             }
-            $DB->update("users", $_SESSION["user_id"],
-                "session_code", $r_code);
+            $this->DB->update("sessions", "user_id", $_SESSION["user_id"],
+                ["session_code" => $r_code]);
             //2 недели
             setcookie("user_id", $_SESSION["user_id"], time() + 3600 * 24 * 14, "/");
             setcookie("session_code", $r_code, time() + 3600 * 24 * 14, "/");
             $response["ok"] = true; 
         } else {
-            if (isset($user)){ 
+            if ($user){ 
                 $response["password_error"] = true;
             }
             else{
@@ -96,21 +96,20 @@ class User
      * 
      * @param DB $usersDB for new user registration
      */
-    public function reg($DB) {
-        $response = $this->validate($DB);
+    public function reg() {
+        $response = $this->validate();
         if (($response["ok"]) == true) {
             
             $password = md5($_POST["password"]."s a l t"); 
             $login = $_POST["login"];
             if(
-                !$DB->create(
+                !$this->DB->create(
                     "users",
-                        "login, password, email, name",
                     [
-                        $login,
-                        $password,
-                        $_POST["email"],
-                        $_POST["name"],
+                        "login" => $login,
+                        "password" => $password,  
+                        "email" => $_POST["email"],
+                        "name" => $_POST["name"],
                     ]
                 )
             ){
@@ -123,10 +122,9 @@ class User
     
     /**
      * 
-     * @param DB $usersDB
      * @return array with checked password
      */
-    public function validate($DB) {
+    public function validate() {
         //~ Проверка валидности данных
         $login = $_POST["login"];
         $password = $_POST["password"];
@@ -157,13 +155,13 @@ class User
             $response = $this->responseChange($response, "name_error"); //"Длина имени должна быть от 2 символов, имя может состоять только из букв и цифр";
         }
         
-        if ($DB->findBy("users", "login", $login)){
+        if ($this->DB->findBy("users", "login", $login)[0] ?? false){
             $response = $this->responseChange($response, "login_repeat");
         }
-        if ($DB->findBy("users", "email", $email)){
+        if ($this->DB->findBy("users", "email", $email)[0] ?? false){
             $response = $this->responseChange($response, "email_repeat");//"Пользователь с таким email уже существует";
         }
-        
+           //$response["ok"] = true;    
         return $response;
     }
     
@@ -221,5 +219,9 @@ class User
      */
     public function getAuth(){
         return $this->auth;
+    }
+
+    public function getFields(){
+        return $this->fields;
     }
 }

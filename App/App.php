@@ -2,64 +2,27 @@
 namespace App;
 use DB\DB;
 use User\User;
+use Router\Router;
 class App
 {
     private $DB;
-    private $User;
-    /**
-     * 
-     */
+    public $user;
+
     public function __construct()
     {
         $this->DB = new DB("localhost", "site", "root", "");
         $this->user = new User($this->DB);
+        global $_GLOBALS; 
+        $_GLOBALS['user'] = $this->user;
+        $_GLOBALS['DB'] = $this->DB;
     }
     
-    /**
-     * application start
-     */
     public function run()
     {
-        
-        if(!empty($this->user->getAuth())){
-
-            $this->render("View/hello.php");
-            
-        }
-        $this->render("View/login.php");
-        
+        $router = new Router(); 
+        $router->run();    
         
     }
     
-    /**
-     * 
-     * @return array with response about login
-     */
-    public function signin()
-    {
-        return $this->user->signin($this->DB);
-    }
-    
-    /**
-     * 
-     * @return array with response about registration
-     */
-    public function reg()
-    {
-        return $this->user->reg($this->DB, $this->DB);
-    }
-    
-    /**
-     * 
-     * @param string $filename with html template
-     */
-    public function render($filename)
-    {
-        if($filename == "View/hello.php"){
-            $name = $this->DB->findBy("users", "user_id", $_COOKIE["user_id"])["name"];
-        }
-        require_once ($filename);
-        exit;
-    }
 }
 
